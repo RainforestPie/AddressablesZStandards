@@ -100,23 +100,44 @@ namespace UnityEditor.AddressableAssets.Build.DataBuilders
 
         public static byte[] TrimEndBytes(byte[] bytes)
         {
-            List<byte> list = bytes.ToList();
+            //List<byte> list = bytes.ToList();
+            //for (int i = bytes.Length - 1; i >= 0; i--)
+            //{
+            //    if (bytes[i] == 0x00)
+            //    {
+            //        list.RemoveAt(i);
+            //    }
+            //    else
+            //    {
+            //        break;
+            //    }
+            //}
+            //return list.ToArray();
+
+            int endIndex = -1;
             for (int i = bytes.Length - 1; i >= 0; i--)
             {
-                if (bytes[i] == 0x00)
+                if (bytes[i] != 0x00)
                 {
-                    list.RemoveAt(i);
-                }
-                else
-                {
+                    endIndex = i;
                     break;
                 }
             }
-            return list.ToArray();
+
+            if (endIndex == -1)
+            {
+                return new byte[0];
+            }
+            else
+            {
+                byte[] result = new byte[endIndex + 1];
+                Array.Copy(bytes, result, endIndex + 1);
+                return result;
+            }
         }
 
 #endif
 
-        }
+    }
 }
 
