@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Local
+  m_EditorClassIdentifier: 
+  m_GroupName: Local
+  m_Data:
+    m_SerializedData: []
+  m_GUID: d6cf2a5498a13d048907036cf92b1416
+  m_SerializeEntries:
+  - m_GUID: 13259a029ce697f40b89f71a39d10619
+    m_Address: LocalSphere
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 7270628386511329263, guid: 13259a029ce697f40b89f71a39d10619,
+      type: 3}
+    m_TargetAsset: {fileID: 7270628386511329263, guid: 13259a029ce697f40b89f71a39d10619,
+      type: 3}
+  - m_GUID: 9554dc534806fe1439aa563bdc3df1ed
+    m_Address: RemoteCube
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    m_MainAsset: {fileID: 8732100308978709787, guid: 9554dc534806fe1439aa563bdc3df1ed,
+      type: 3}
+    m_TargetAsset: {fileID: 8732100308978709787, guid: 9554dc534806fe1439aa563bdc3df1ed,
+      type: 3}
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: f87f6589784b8df409f71dd85058647e, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: e2b523e8b9977af46b50fc52e83b3601, type: 2}
+    - {fileID: 11400000, guid: 5fed14cc2c4760448a51587f2d39d52b, type: 2}
