@@ -21,18 +21,14 @@ MonoBehaviour:
     m_Address: LocalSphere
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 7270628386511329263, guid: 13259a029ce697f40b89f71a39d10619,
-      type: 3}
-    m_TargetAsset: {fileID: 7270628386511329263, guid: 13259a029ce697f40b89f71a39d10619,
-      type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   - m_GUID: 9554dc534806fe1439aa563bdc3df1ed
     m_Address: RemoteCube
     m_ReadOnly: 0
     m_SerializedLabels: []
-    m_MainAsset: {fileID: 8732100308978709787, guid: 9554dc534806fe1439aa563bdc3df1ed,
-      type: 3}
-    m_TargetAsset: {fileID: 8732100308978709787, guid: 9554dc534806fe1439aa563bdc3df1ed,
-      type: 3}
+    m_MainAsset: {fileID: 0}
+    m_TargetAsset: {fileID: 0}
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: f87f6589784b8df409f71dd85058647e, type: 2}
   m_SchemaSet:

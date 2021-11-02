@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEditor.AddressableAssets.Build.BuildPipelineTasks;
 using UnityEditor.AddressableAssets.Settings;
@@ -43,6 +44,41 @@ namespace UnityEditor.AddressableAssets.Build.DataBuilders
             {
                 if (aaContext.assetGroupToBundles.TryGetValue(assetGroup, out List<string> buildBundles))
                 {
+                    if (assetGroup.ReadOnly)
+                    {
+                        continue;
+                    }
+                    for (int i = 0; i < assetGroup.Schemas.Count; i++)
+                    {
+                        var schema = assetGroup.Schemas[i];
+                        //if (schema is UnityEditor.AddressableAssets.Settings.GroupSchemas.ContentUpdateGroupSchema)
+                        //{
+                        //    var s = schema as UnityEditor.AddressableAssets.Settings.GroupSchemas.ContentUpdateGroupSchema;
+                        //}
+                        //else
+                        if (schema is UnityEditor.AddressableAssets.Settings.GroupSchemas.BundledAssetGroupSchema)
+                        {
+                            var bundledAssetGroupSchema = schema as UnityEditor.AddressableAssets.Settings.GroupSchemas.BundledAssetGroupSchema;
+                            bundledAssetGroupSchema.Compression = BundledAssetGroupSchema.BundleCompressionMode.Uncompressed;
+
+                            if (schema != null)
+                            {
+                                Type t = schema.GetType();
+                                FieldInfo[] fieldInfos = t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+                                foreach (var fieldIfo in fieldInfos)
+                                {
+                                    if (fieldIfo.Name == "m_AssetBundleProviderType")
+                                    {
+                                        SerializedType o = (SerializedType)fieldIfo.GetValue(schema);
+                                        o.Value = typeof(CustomProvider);
+                                        fieldIfo.SetValue(schema, (object)o);
+                                        EditorUtility.SetDirty(assetGroup);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     var locations = aaContext.locations;
                     for (int i = 0; i < locations.Count; i++)
                     {
@@ -60,6 +96,9 @@ namespace UnityEditor.AddressableAssets.Build.DataBuilders
                     }
                 }
             }
+
+            EditorUtility.RequestScriptReload(); // 重新加载，刷新面板
+
             return opResult;
         }
 
@@ -138,6 +177,84 @@ namespace UnityEditor.AddressableAssets.Build.DataBuilders
 
 #endif
 
+    }
+
+    public class AutoSetting
+    {
+        [MenuItem("AA/GroupAutoSetting %a")]
+        /// <summary>
+        /// 设置资源打进包体里（大包）
+        /// </summary>
+        public static void SetLargePacket()
+        {
+            foreach (var addressableAssetGroup in addressableAssetSettings.groups)
+            {
+                if (/*addressableAssetGroup.IsDefaultGroup() ||*/ addressableAssetGroup.ReadOnly)
+                    continue;
+                for (int i = 0; i < addressableAssetGroup.Schemas.Count; i++)
+                {
+                    var schema = addressableAssetGroup.Schemas[i];
+                    if (schema is UnityEditor.AddressableAssets.Settings.GroupSchemas.ContentUpdateGroupSchema)
+                    {
+                        //(schema as UnityEditor.AddressableAssets.Settings.GroupSchemas.ContentUpdateGroupSchema)
+                        //    .StaticContent = true;
+                        var s = schema as UnityEditor.AddressableAssets.Settings.GroupSchemas.ContentUpdateGroupSchema;
+                    }
+                    else if (schema is UnityEditor.AddressableAssets.Settings.GroupSchemas.BundledAssetGroupSchema)
+                    {
+                        var bundledAssetGroupSchema = schema as UnityEditor.AddressableAssets.Settings.GroupSchemas.BundledAssetGroupSchema;
+                        //bundledAssetGroupSchema.BuildPath.SetVariableByName(addressableAssetGroup.Settings,
+                        //    AddressableAssetSettings.kLocalBuildPath);
+                        //bundledAssetGroupSchema.LoadPath.SetVariableByName(addressableAssetGroup.Settings,
+                        //    AddressableAssetSettings.kLocalLoadPath);
+
+                        bundledAssetGroupSchema.Compression = BundledAssetGroupSchema.BundleCompressionMode.LZMA;
+
+                        if (schema != null)
+                        {
+                            Type t = schema.GetType();
+                            FieldInfo[] fieldInfos = t.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public);
+                            foreach (var fieldIfo in fieldInfos)
+                            {
+                                if (fieldIfo.Name == "m_AssetBundleProviderType")
+                                {
+                                    SerializedType o = (SerializedType)fieldIfo.GetValue(schema);
+                                    o.Value = typeof(CustomProvider);
+                                    fieldIfo.SetValue(schema, (object)o);
+                                    EditorUtility.SetDirty(addressableAssetGroup);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            EditorUtility.RequestScriptReload(); //
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            UnityEngine.Debug.Log("设置成大包资源完成");
+        }
+
+        private static AddressableAssetSettings m_AddressableAssetSettings;
+        private static AddressableAssetSettings addressableAssetSettings
+        {
+            get
+            {
+                if (m_AddressableAssetSettings == null)
+                {
+                    m_AddressableAssetSettings = AddressableAssetSettingsDefaultObject.Settings;
+                    if (m_AddressableAssetSettings == null)
+                        m_AddressableAssetSettings = AssetDatabase.LoadAssetAtPath<AddressableAssetSettings>("Assets/AddressableAssetsData/AddressableAssetSettings.asset");
+                }
+                return m_AddressableAssetSettings;
+            }
+        }
+
+        void modifyGroupBundleProvider(BundledAssetGroupSchema schema)
+        {
+
+
+        }
     }
 }
 
